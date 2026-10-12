@@ -78,23 +78,12 @@ export default function Game() {
     );
   });
 
-  const winner = calculateWinner(currentSquares);
-  let status;
-  if (winner) {
-    status = "Winner: " + winner;
-  } else if (currentSquares.every(Boolean)) {
-    status = "Draw";
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
-
   return (
     <div className="game">
       <div className="game-board">
         <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
-        <div>{status}</div>
         <ol>{moves}</ol>
       </div>
     </div>
