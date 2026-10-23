@@ -75,6 +75,22 @@ ul {
   margin-bottom: 10px;
 }
 
+.board-size {
+  align-items: flex-end;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.board-size label {
+  display: flex;
+  flex-direction: column;
+}
+
+.board-size input {
+  width: 5rem;
+}
+
 .game {
   display: flex;
   flex-direction: row;
