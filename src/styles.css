@@ -75,6 +75,13 @@ ul {
   margin-bottom: 10px;
 }
 
+.board-size-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
 .game {
   display: flex;
   flex-direction: row;
