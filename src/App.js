@@ -110,3 +110,65 @@ function calculateWinner(squares) {
 
   return null;
 }
+
+function minimax(board, depth, isMaximizing) {
+  const winner = calculateWinner(board);
+  if (winner === "X") {
+    return 10 - depth;
+  }
+  if (winner === "O") {
+    return depth - 10;
+  }
+  if (board.every(Boolean)) {
+    return 0;
+  }
+
+  let bestScore = isMaximizing ? -Infinity : Infinity;
+  const player = isMaximizing ? "X" : "O";
+
+  for (let index = 0; index < board.length; index += 1) {
+    if (board[index]) {
+      continue;
+    }
+
+    board[index] = player;
+    const score = minimax(board, depth + 1, !isMaximizing);
+    board[index] = null;
+    bestScore = isMaximizing
+      ? Math.max(bestScore, score)
+      : Math.min(bestScore, score);
+  }
+
+  return bestScore;
+}
+
+export function findBestMove(squares, player) {
+  if (player !== "X" && player !== "O") {
+    throw new Error('player must be either "X" or "O"');
+  }
+
+  const isMaximizing = player === "X";
+  let bestScore = isMaximizing ? -Infinity : Infinity;
+  let bestMove = -1;
+  const board = squares.slice();
+
+  for (let index = 0; index < board.length; index += 1) {
+    if (board[index]) {
+      continue;
+    }
+
+    board[index] = player;
+    const score = minimax(board, 0, !isMaximizing);
+    board[index] = null;
+
+    if (
+      (isMaximizing && score > bestScore) ||
+      (!isMaximizing && score < bestScore)
+    ) {
+      bestScore = score;
+      bestMove = index;
+    }
+  }
+
+  return bestMove;
+}
