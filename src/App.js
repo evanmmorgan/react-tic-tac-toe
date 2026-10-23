@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 function Square({ value, onSquareClick }) {
   return (
@@ -13,12 +13,12 @@ function Board({ xIsNext, squares, onPlay }) {
   const isDraw = squares.every(Boolean) && !winner;
 
   function handleClick(index) {
-    if (squares[index] || winner) {
+    if (!xIsNext || squares[index] || winner) {
       return;
     }
 
     const nextSquares = squares.slice();
-    nextSquares[index] = xIsNext ? "X" : "O";
+    nextSquares[index] = "X";
     onPlay(nextSquares);
   }
 
@@ -59,11 +59,26 @@ export default function Game() {
   const currentSquares = history[currentMove];
   const xIsNext = currentMove % 2 === 0;
 
-  function handlePlay(nextSquares) {
+  const handlePlay = useCallback((nextSquares) => {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
-  }
+  }, [currentMove, history]);
+
+  useEffect(() => {
+    if (xIsNext || calculateWinner(currentSquares)) {
+      return;
+    }
+
+    const move = findBestMove(currentSquares);
+    if (move === null) {
+      return;
+    }
+
+    const nextSquares = currentSquares.slice();
+    nextSquares[move] = "O";
+    handlePlay(nextSquares);
+  }, [currentMove, currentSquares, handlePlay, xIsNext]);
 
   function jumpTo(move) {
     setCurrentMove(move);
@@ -109,4 +124,24 @@ function calculateWinner(squares) {
   }
 
   return null;
+}
+
+function findBestMove(squares) {
+  const moveOrder = [4, 0, 2, 6, 8, 1, 3, 5, 7];
+
+  for (const player of ["O", "X"]) {
+    for (const index of moveOrder) {
+      if (squares[index]) {
+        continue;
+      }
+
+      const nextSquares = squares.slice();
+      nextSquares[index] = player;
+      if (calculateWinner(nextSquares) === player) {
+        return index;
+      }
+    }
+  }
+
+  return moveOrder.find((index) => !squares[index]) ?? null;
 }
